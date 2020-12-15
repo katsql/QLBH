@@ -35,7 +35,7 @@ public class HoaDon extends javax.swing.JFrame {
         public Object getValueAt(int row, int column) {
             switch (column){
                 case 0:
-                    return listHD.get(row).getSttHD();
+                    return listHD.get(row).getMaHD();
                 case 1:
                     return listHD.get(row).getMaMH();
                 case 2:
@@ -262,7 +262,7 @@ public class HoaDon extends javax.swing.JFrame {
             if (row != -1) 
             {
                 int Stt = (int) tb_Bill.getValueAt(row, 0);  //Lấy giá trị của phần tử hàng được chọn, cột 0
-                bm.deleteBill(Stt);                          //Xóa hàng được chọn theo SttHD
+                bm.deleteBill(Stt);                          //Xóa hàng được chọn theo MaHD
                 JOptionPane.showMessageDialog(null, "Xóa thành công!");
             } 
             else JOptionPane.showMessageDialog(null, "Vui lòng chọn hàng hóa đơn cần xóa!");

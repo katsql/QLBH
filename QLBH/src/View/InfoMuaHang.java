@@ -290,7 +290,7 @@ public class InfoMuaHang extends javax.swing.JFrame {
                     
                  String MaMH = pm.getMaMH((String)jc_NameMH.getSelectedItem());
                  int SLmua = (int) js_AmountMH.getValue();
-                 float ThanhTien = SLmua * bm.getDonGia((String)jc_NameMH.getSelectedItem());
+                 int ThanhTien = SLmua * bm.getDonGia((String)jc_NameMH.getSelectedItem());
                       
                  bm.addBill(1,MaNVHT,MaMH, SLmua, ThanhTien);
                  JOptionPane.showMessageDialog(null, "Thêm vào hóa đơn thành công!");

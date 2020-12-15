@@ -34,14 +34,14 @@ public class BillManager {
         return hd;
     }
     
-    public void addBill(int MaKH, int MaNVBan, String maMH, int SoLuongMua, float thanhTien) throws SQLException{
+    public void addBill(int MaKH, int MaNVBan, String maMH, int SoLuongMua, int thanhTien) throws SQLException{
         String query2 = "insert into HOADON(MaKH, MaNVHT, MaMH, SoLuongMua, ThanhTien) values(?, ?, ?, ?, ?)";
         PreparedStatement ps2 = this.conn.prepareStatement(query2);
         ps2.setInt(1, MaKH);
         ps2.setInt(2, MaNVBan);
         ps2.setString(3, maMH);
         ps2.setInt(4, SoLuongMua);
-        ps2.setFloat(5, thanhTien);
+        ps2.setInt(5, thanhTien);
         ps2.execute();
 }
     
@@ -53,7 +53,7 @@ public class BillManager {
         Bill hd = null;
         while(rs.next()){
             hd = new Bill();
-            hd.setSttHD(rs.getInt("SttHD"));
+            hd.setMaHD(rs.getInt("MaHD"));
             hd.setMaMH(rs.getString("MaMH"));
             hd.setSoLuongMua(rs.getInt("SoLuongMua"));
             hd.setThanhTien(rs.getInt("ThanhTien"));
@@ -82,14 +82,14 @@ public class BillManager {
         return tongHD;
     }
     
-    public float getDonGia(String tenMH) throws SQLException{
+    public int getDonGia(String tenMH) throws SQLException{
         String query = "Select DonGia from MATHANG where tenmh = ?";
         PreparedStatement ps = this.conn.prepareStatement(query);
         ps.setString(1, tenMH);
         ResultSet rs = ps.executeQuery();
-        float donGia = 0;
+        int donGia = 0;
         if(rs.next()){
-            donGia = rs.getFloat("DonGia");            
+            donGia = rs.getInt("DonGia");            
         }
         return donGia;
     }
@@ -118,10 +118,10 @@ public class BillManager {
         return tenKH;
     }
     
-    public boolean deleteBill (int SttHD) throws SQLException{
-            String query =  "DELETE FROM HOADON WHERE SttHD =?";
+    public boolean deleteBill (int MaHD) throws SQLException{
+            String query =  "DELETE FROM HOADON WHERE MaHD =?";
             PreparedStatement ps = this.conn.prepareStatement(query);
-            ps.setInt(1, SttHD);
+            ps.setInt(1, MaHD);
             ps.execute();
             return true;
     }

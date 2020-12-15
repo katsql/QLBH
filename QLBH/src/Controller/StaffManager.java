@@ -79,7 +79,7 @@ public class StaffManager {
         return false;
     }
     
-    public void addStaff(String hoTen, Date ngaySinh, String diaChi, Boolean gioiTinh, String phone, int ngayCong, float heSoLuong, int luong) throws SQLException{
+    public void addStaff(String hoTen, Date ngaySinh, String diaChi, Boolean gioiTinh, String phone, float ngayCong, float heSoLuong, int luong) throws SQLException{
         String gt;
         gt = (gioiTinh = true)?"Nam":"Nữ";
         SimpleDateFormat DateFor = new SimpleDateFormat("dd-MM-yyyy");
@@ -91,7 +91,7 @@ public class StaffManager {
         ps2.setString(3, diaChi);
         ps2.setString(4, gt);
         ps2.setString(5, phone);
-        ps2.setInt(6, ngayCong);
+        ps2.setFloat(6, ngayCong);
         ps2.setFloat(7, heSoLuong);
         ps2.setInt(8, luong);
         ps2.execute();
@@ -108,7 +108,7 @@ public class StaffManager {
         return false;
     }
     
-    public boolean updateStaff(int maNV, String hoTen, Date ngaySinh, String diaChi, Boolean gioiTinh, String phone, int ngayCong, float heSoLuong, int Luong) throws SQLException{
+    public boolean updateStaff(int maNV, String hoTen, Date ngaySinh, String diaChi, Boolean gioiTinh, String phone, float ngayCong, float heSoLuong, int Luong) throws SQLException{
         if (this.checkStaff(maNV)){
             String gt;
             gt = (gioiTinh = true)?"Nam":"Nữ";
@@ -121,7 +121,7 @@ public class StaffManager {
             ps2.setString(3, diaChi);
             ps2.setString(4, gt);
             ps2.setString(5, phone);
-            ps2.setInt(6, ngayCong);
+            ps2.setFloat(6, ngayCong);
             ps2.setFloat(7, heSoLuong);
             ps2.setInt(8, Luong);
             ps2.setInt(9, maNV);

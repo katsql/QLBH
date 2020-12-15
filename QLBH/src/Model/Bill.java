@@ -10,7 +10,7 @@ package Model;
  * @author huutr
  */
 public class Bill extends Product{
-    private int SttHD;
+    private int MaHD;
     private String MaMH;
     private int SoLuongMua;
     private int ThanhTien;
@@ -20,8 +20,8 @@ public class Bill extends Product{
     public Bill(){
         
     }
-    public Bill(int SttHD, String MaMH, int SoLuongMua, int ThanhTien) {
-        this.SttHD = SttHD;
+    public Bill(int MaHD, String MaMH, int SoLuongMua, int ThanhTien) {
+        this.MaHD = MaHD;
         this.MaMH = MaMH;
         this.SoLuongMua = SoLuongMua;
         this.ThanhTien = ThanhTien;
@@ -29,12 +29,12 @@ public class Bill extends Product{
     
     
     
-     public int getSttHD() {
-        return SttHD;
+     public int getMaHD() {
+        return MaHD;
     }
 
-    public void setSttHD(int SttHD) {
-        this.SttHD = SttHD;
+    public void setMaHD(int MaHD) {
+        this.MaHD = MaHD;
     }
     
     public String getMaMH() {
