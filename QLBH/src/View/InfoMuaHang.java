@@ -161,7 +161,7 @@ public class InfoMuaHang extends javax.swing.JFrame {
         jl_InfoBuy.setFont(new java.awt.Font("Tahoma", 1, 18)); 
         jl_InfoBuy.setText("THÔNG TIN MUA HÀNG");
 
-        btn_AddOfHD.setText("Thêm vào hóa đơn");
+        btn_AddOfHD.setText("Thêm vào giỏ hàng");
         btn_AddOfHD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_AddOfHDActionPerformed(evt);
@@ -175,7 +175,7 @@ public class InfoMuaHang extends javax.swing.JFrame {
             }
         });
 
-        btn_Bill.setText("Hóa đơn");
+        btn_Bill.setText("Giỏ hàng");
         btn_Bill.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_BillActionPerformed(evt);
@@ -286,14 +286,14 @@ public class InfoMuaHang extends javax.swing.JFrame {
 //                    ps.setString(1, us);
 //                    ResultSet rs = ps.executeQuery();
 //                    int MaNVHT = rs.getInt("MaNVHT");
-                 int MaNVHT = 0;
                     
-                 String MaMH = pm.getMaMH((String)jc_NameMH.getSelectedItem());
+                 String TenMH = (String)jc_NameMH.getSelectedItem();
+                 int DonGia = bm.getDonGia(TenMH);
                  int SLmua = (int) js_AmountMH.getValue();
                  int ThanhTien = SLmua * bm.getDonGia((String)jc_NameMH.getSelectedItem());
                       
-                 bm.addBill(1,MaNVHT,MaMH, SLmua, ThanhTien);
-                 JOptionPane.showMessageDialog(null, "Thêm vào hóa đơn thành công!");
+                 bm.addCart(TenMH, DonGia, SLmua, ThanhTien);
+                 JOptionPane.showMessageDialog(null, "Thêm vào giỏ hàng thành công!");
                 this.dispose();
                 InfoMuaHang info = new InfoMuaHang();
                 info.setVisible(true);
@@ -307,8 +307,8 @@ public class InfoMuaHang extends javax.swing.JFrame {
     }                                           
 
     private void btn_BillActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        HoaDon hd = new HoaDon();
-        hd.setVisible(true);
+        GioHang gh = new GioHang();
+        gh.setVisible(true);
     }                  
     public String IFlbUserName(String user){
         lbUserName.setText("Xin chào, " + user + "!");

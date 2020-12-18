@@ -2,6 +2,7 @@ package Controller;
 
 import Model.DBConnector;
 import Model.Bill;
+import Model.Cart;
 import Model.Product;
 import java.sql.Statement;
 import java.sql.Connection;
@@ -34,39 +35,33 @@ public class BillManager {
         return hd;
     }
     
-    public void addBill(int MaKH, int MaNVBan, String maMH, int SoLuongMua, int thanhTien) throws SQLException{
-        String query2 = "insert into HOADON(MaKH, MaNVHT, MaMH, SoLuongMua, ThanhTien) values(?, ?, ?, ?, ?)";
+    public void addCart(String TenMHGH, int DonGiaGH, int SoLuongMua, int ThanhTien) throws SQLException{
+        String query2 = "insert into GIOHANG(TenMHGH, DonGiaGH, SoLuongMua, ThanhTien) values(?, ?, ?, ?)";
         PreparedStatement ps2 = this.conn.prepareStatement(query2);
-        ps2.setInt(1, MaKH);
-        ps2.setInt(2, MaNVBan);
-        ps2.setString(3, maMH);
-        ps2.setInt(4, SoLuongMua);
-        ps2.setInt(5, thanhTien);
+        ps2.setString(1, TenMHGH);
+        ps2.setInt(2, DonGiaGH);
+        ps2.setInt(3, SoLuongMua);
+        ps2.setInt(4, ThanhTien);
         ps2.execute();
 }
     
-    public List<Bill> getListHD_follow_MaMH() throws SQLException{
-        List<Bill> ListHD_follow_MaMH = new ArrayList<>();
-        String query = "Select * from HOADON hd, MATHANG mh where hd.MaMH=mh.MaMH";
+    public List<Cart> getListGH_follow_TenMH() throws SQLException{
+        List<Cart> ListGH_follow_TenMH = new ArrayList<>();
+        String query = "Select * from GIOHANG gh, MATHANG mh where gh.TenMHGH=mh.TenMH";
         PreparedStatement ps = this.conn.prepareStatement(query);
         ResultSet rs = ps.executeQuery();
-        Bill hd = null;
+        Cart gh = null;
         while(rs.next()){
-            hd = new Bill();
-            hd.setMaHD(rs.getInt("MaHD"));
-            hd.setMaMH(rs.getString("MaMH"));
-            hd.setSoLuongMua(rs.getInt("SoLuongMua"));
-            hd.setThanhTien(rs.getInt("ThanhTien"));
+            gh = new Cart();
+            gh.setStt(rs.getInt("Stt"));
+            gh.setTenMHGH(rs.getString("TenMHGH"));
+            gh.setDonGiaGH(rs.getInt("DonGiaGH"));
+            gh.setSoLuongMua(rs.getInt("SoLuongMua"));
+            gh.setThanhTien(rs.getInt("ThanhTien"));
             
-            hd.setSttMH((rs.getInt("SttMH")));
-            hd.setTenMH(rs.getString("TenMH"));
-            hd.setLoaiMH(rs.getString("LoaiMH"));
-            hd.setHangSX(rs.getString("HangSX"));
-            hd.setSoLuong(rs.getInt("SoLuong"));
-            hd.setDonGia(rs.getInt("DonGia"));
-            ListHD_follow_MaMH.add(hd);
+            ListGH_follow_TenMH.add(gh);
         }
-        return ListHD_follow_MaMH;
+        return ListGH_follow_TenMH;
         
         
     }
