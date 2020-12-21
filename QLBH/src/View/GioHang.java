@@ -1,6 +1,7 @@
 package View;
 
 import Controller.BillManager;
+import Controller.StaffManager;
 import Model.Bill;
 import Model.Cart;
 import Model.Product;
@@ -16,11 +17,17 @@ public class GioHang extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setResizable(false);   
+        int TongGH = 0;
         try {           
             BillManager bm = new BillManager();            
             this.listGH = bm.getListGH_follow_TenMH();
             Model model = new Model();
             this.tb_Cart.setModel(model);
+            for(Cart gh: listGH)
+            {
+                TongGH = TongGH + gh.getThanhTien();
+            }
+            total_money.setText(String.valueOf(TongGH));
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
@@ -102,8 +109,9 @@ public class GioHang extends javax.swing.JFrame {
         jl_AddressKH = new javax.swing.JLabel();
         tf_CodeKH = new javax.swing.JTextField();
         tf_AddressKH = new javax.swing.JTextField();
-        jl_TongGH = new javax.swing.JLabel();
-
+        VND = new javax.swing.JLabel();
+        total_money = new javax.swing.JLabel();
+        TongGH = new javax.swing.JLabel();
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         tb_Cart.setModel(new javax.swing.table.DefaultTableModel(
@@ -157,7 +165,11 @@ public class GioHang extends javax.swing.JFrame {
 
         jl_AddressKH.setText("Địa chỉ");
         
-        jl_TongGH.setText("Tổng :");
+        VND.setText("VND");
+
+        total_money.setText("jLabel1");
+
+        TongGH.setText("Tổng giỏ hàng:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -210,8 +222,13 @@ public class GioHang extends javax.swing.JFrame {
                 .addContainerGap(39, Short.MAX_VALUE))
                     
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jl_TongGH, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28))
+                .addContainerGap(391, Short.MAX_VALUE)
+                .addComponent(TongGH)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(total_money)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(VND, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(74, 74, 74))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,7 +261,11 @@ public class GioHang extends javax.swing.JFrame {
                 .addGap(34, 34, 34))
                     
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jl_TongGH)
+                .addContainerGap(566, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(VND)
+                    .addComponent(total_money)
+                    .addComponent(TongGH))
                 .addGap(91, 91, 91))
         );
 
@@ -256,7 +277,53 @@ public class GioHang extends javax.swing.JFrame {
     }                                         
 
     private void btn_PrintHDActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        
+        try {
+              
+            //Đưa dữ liệu khách hàng vào database
+            StaffManager sm = new StaffManager();
+            String HoTen = tf_NameKH.getText();
+            String DiaChi = tf_AddressKH.getText(); 
+            String MaSoThue = tf_CodeKH.getText();
+            int Sdt = Integer.parseInt(tf_PhoneKH.getText()); 
+            int TongGH = Integer.parseInt(total_money.getText());
+            sm.addKH(HoTen, DiaChi, Sdt, MaSoThue, TongGH);
+            
+            //Lấy mã khách hàng của khách hàng vừa thêm trong database
+            int MaKH = sm.getMaKH(Sdt);
+            
+            //Đưa dư liệu vào hóa đơn trong database
+            BillManager bm = new BillManager();
+            this.listGH = bm.getListGH_follow_TenMH(); 
+            for(Cart hd: listGH)
+            {
+                bm.addBill(MaKH, hd.getMaMH(), hd.getSoLuongMua(), hd.getThanhTien());
+            }  
+
+            //Kết nối tới máy in để in hóa đơn
+            HoaDon hd = new HoaDon();
+            hd.setVisible(true);
+            JOptionPane.showMessageDialog(null, "Hóa đơn đang được in, vui lòng chờ trong giây lát!!!");
+            hd.dispose();
+            JOptionPane.showMessageDialog(null, "In hóa đơn thành công!");
+                  
+            //Xóa giỏ hàng trong database
+            bm.deleteCart();
+            
+            //Xóa dữ liệu trong giao diện            
+            Model model = new Model();
+            this.listGH = bm.getListGH_follow_TenMH();
+            this.tb_Cart.setModel(model);      
+            tf_NameKH.setText("");
+            tf_AddressKH.setText("");
+            tf_CodeKH.setText("");
+            tf_PhoneKH.setText("");
+            total_money.setText("0");
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
+        }  
     }  
     
     
@@ -265,24 +332,28 @@ public class GioHang extends javax.swing.JFrame {
         try {
             BillManager bm = new BillManager(); 
             Model model = new Model();
-            int row = -1;
+            int row = -1, TongGH = 0;
             row = tb_Cart.getSelectedRow();              //Lấy hàng được click
             if (row != -1) 
-            {
-                int Stt = (int) tb_Cart.getValueAt(row, 0);  //Lấy giá trị của phần tử hàng được chọn, cột 0
-                bm.deleteBill(Stt);                          //Xóa hàng được chọn theo MaHD
+            {   
+                int SttGH = (int) tb_Cart.getValueAt(row, 0);  //Lấy giá trị của phần tử hàng được chọn, cột 0
+                bm.deleteCart_follow_SttGH(SttGH);                          //Xóa hàng được chọn theo SttGH
                 JOptionPane.showMessageDialog(null, "Xóa thành công!");
             } 
-            else JOptionPane.showMessageDialog(null, "Vui lòng chọn hàng giỏ hàng cần xóa!");
+            else JOptionPane.showMessageDialog(null, "Vui lòng click vào hàng cần xóa!");
             this.listGH = bm.getListGH_follow_TenMH();         //Cập nhật lại database giỏ hàng sau khi xóa 
-            this.tb_Cart.setModel(model);                     //Cập nhật giỏ hàng lên bảng
+            this.tb_Cart.setModel(model);  
+            for(Cart gh: listGH)
+            {
+                TongGH = TongGH + gh.getThanhTien();
+            }
+            total_money.setText(String.valueOf(TongGH));//Cập nhật giỏ hàng lên bảng
             
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
+        }  
     }                                            
                    
     private javax.swing.JButton btn_DeleteGH;
@@ -296,7 +367,9 @@ public class GioHang extends javax.swing.JFrame {
     private javax.swing.JLabel jl_InfoKH;
     private javax.swing.JLabel jl_NameKH;
     private javax.swing.JLabel jl_PhoneKH;
-    private javax.swing.JLabel jl_TongGH;
+    private javax.swing.JLabel TongGH;
+    private javax.swing.JLabel VND;
+    private javax.swing.JLabel total_money;
     private javax.swing.JTable tb_Cart;
     private javax.swing.JTextField tf_AddressKH;
     private javax.swing.JTextField tf_CodeKH;

@@ -11,11 +11,11 @@ package Model;
  */
 public class Product {
     private String MaMH;
-    private String tenMH;
-    private String hangSX;
+    private String TenMH;
+    private String HangSX;
     private int SoLuong;
     private int DonGia;
-    private String loaiMH;
+    private String LoaiMH;
     private int SttMH;
 
     public int getSttMH() {
@@ -45,22 +45,22 @@ public class Product {
     public Product(){
         
     }
-    public Product(int SttMH, String MaMH, String tenMH, String hangSX, int soLuong, int DonGia, String loaiMH) {
+    public Product(int SttMH, String MaMH, String TenMH, String HangSX, int soLuong, int DonGia, String LoaiMH) {
         this.SttMH = SttMH;
         this.MaMH = MaMH;
-        this.tenMH = tenMH;
-        this.hangSX = hangSX;
+        this.TenMH = TenMH;
+        this.HangSX = HangSX;
         this.SoLuong = soLuong;
         this.DonGia = DonGia;
-        this.loaiMH = loaiMH;
+        this.LoaiMH = LoaiMH;
     }
 
     public String getLoaiMH() {
-        return loaiMH;
+        return LoaiMH;
     }
 
-    public void setLoaiMH(String loaiMH) {
-        this.loaiMH = loaiMH;
+    public void setLoaiMH(String LoaiMH) {
+        this.LoaiMH = LoaiMH;
     }
 
     public String getMaMH() {
@@ -72,19 +72,19 @@ public class Product {
     }
 
     public String getTenMH() {
-        return tenMH;
+        return TenMH;
     }
 
-    public void setTenMH(String tenMH) {
-        this.tenMH = tenMH;
+    public void setTenMH(String TenMH) {
+        this.TenMH = TenMH;
     }
 
     public String getHangSX() {
-        return hangSX;
+        return HangSX;
     }
 
-    public void setHangSX(String hangSX) {
-        this.hangSX = hangSX;
+    public void setHangSX(String HangSX) {
+        this.HangSX = HangSX;
     }
     
 }

@@ -4,6 +4,7 @@ import Model.DBConnector;
 import Model.Bill;
 import Model.Cart;
 import Model.Product;
+import java.math.BigDecimal;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,9 +46,27 @@ public class BillManager {
         ps2.execute();
 }
     
+    public void addBill(int MaKH, String MaMH, int SoLuongMua, int ThanhTien) throws SQLException
+    {
+        String query2 = "insert into HOADON(MaKH, MaMH, SoLuongMua, ThanhTien) values(?, ?, ?, ?)";
+        PreparedStatement ps2 = this.conn.prepareStatement(query2);
+        ps2.setInt(1, MaKH);
+        ps2.setString(2, MaMH);
+        ps2.setInt(3, SoLuongMua);
+        ps2.setInt(4, ThanhTien);
+        ps2.execute();
+    }
+    
+    public boolean deleteCart() throws SQLException {
+            String query =  "delete from GIOHANG";
+            Statement st = this.conn.createStatement();
+            st.execute(query);
+            return true;
+    }
+    
     public List<Cart> getListGH_follow_TenMH() throws SQLException{
         List<Cart> ListGH_follow_TenMH = new ArrayList<>();
-        String query = "Select * from GIOHANG gh, MATHANG mh where gh.TenMHGH=mh.TenMH";
+        String query = "Select * from GIOHANG gh, MATHANG mh where gh.TenMHGH=mh.TenMH order by Stt";
         PreparedStatement ps = this.conn.prepareStatement(query);
         ResultSet rs = ps.executeQuery();
         Cart gh = null;
@@ -58,6 +77,12 @@ public class BillManager {
             gh.setDonGiaGH(rs.getInt("DonGiaGH"));
             gh.setSoLuongMua(rs.getInt("SoLuongMua"));
             gh.setThanhTien(rs.getInt("ThanhTien"));
+            
+            gh.setSttMH(rs.getInt("SttMH"));
+            gh.setMaMH(rs.getString("MaMH"));
+            gh.setTenMH(rs.getString("TenMH"));
+            gh.setHangSX(rs.getString("HangSX"));
+            gh.setLoaiMH(rs.getString("LoaiMH"));
             
             ListGH_follow_TenMH.add(gh);
         }
@@ -113,10 +138,10 @@ public class BillManager {
         return tenKH;
     }
     
-    public boolean deleteBill (int MaHD) throws SQLException{
-            String query =  "DELETE FROM HOADON WHERE MaHD =?";
+    public boolean deleteCart_follow_SttGH (int SttGH) throws SQLException{
+            String query =  "DELETE FROM GIOHANG WHERE Stt =?";
             PreparedStatement ps = this.conn.prepareStatement(query);
-            ps.setInt(1, MaHD);
+            ps.setInt(1, SttGH);
             ps.execute();
             return true;
     }
@@ -337,4 +362,142 @@ public class BillManager {
         }
         return ListHangSX_follow_LoaiMH_and_TenMH;
     }
+    
+    
+               ////Xử lý phần chuyển tiền từ số thành chữ
+     //Chuyển số thành chữ
+    public static String numberToString(BigDecimal number) {
+		String sNumber = number.toString();
+		// Tao mot bien tra ve
+		String sReturn = "";
+		// Tim chieu dai cua chuoi
+		int iLen = sNumber.length();
+		// Lat nguoc chuoi nay lai
+		String sNumber1 = "";
+		for (int i = iLen - 1; i >= 0; i--) {
+			sNumber1 += sNumber.charAt(i);
+		}
+		// Tao mot vong lap de doc so
+		// Tao mot bien nho vi tri cua sNumber
+		int iRe = 0;
+		do {
+			// Tao mot bien cat tam
+			String sCut = "";
+			if (iLen > 3) {
+				sCut = sNumber1.substring((iRe * 3), (iRe * 3) + 3);
+				sReturn = Read(sCut, iRe) + sReturn;
+				iRe++;
+				iLen -= 3;
+			} else {
+				sCut = sNumber1.substring((iRe * 3), (iRe * 3) + iLen);
+				sReturn = Read(sCut, iRe) + sReturn;
+				break;
+			}
+		} while (true);
+		if(sReturn.length() > 1){
+			sReturn = sReturn.substring(0,1).toUpperCase() + sReturn.substring(1);
+		}
+		sReturn = sReturn + "đồng";
+
+		// xu ly lan cuoi voi 220 000 tỷ 000 000 000 000 000 HUTTV ADDED 3 OCT
+		if(sNumber.length()>12)
+		{
+			// tren gia tri can xu ly, kiem tra xem don vi TY co = 000 khong
+			int begin = sNumber.length()-9;
+			String donviTy = sNumber.substring(begin-3, (begin-3)+3);
+			if(donviTy.equals("000"))
+			{
+				sReturn = sReturn.replaceFirst("ngàn", "ngàn tỷ");
+			}
+		}
+
+
+		return sReturn;
+	}
+    
+    //Đọc số đưa vào
+    public static String Read(String sNumber, int iPo) {
+		// Tao mot bien tra ve
+		String sReturn = "";
+		// Tao mot bien so
+		String sPo[] = { "", "ngàn" + " ",
+				"triệu" + " ", "tỷ" + " ",  "ngàn" + " "};
+		String sSo[] = { "không" + " ", "một" + " ",
+				"hai" + " ", "ba" + " ",
+				"bốn" + " ", "năm" + " ",
+				"sáu" + " ", "bảy" + " ",
+				"tám" + " ", "chín" + " " };
+		String sDonvi[] = { "", "mươi" + " ",
+				"trăm" + " " };
+		// Tim chieu dai cua chuoi
+		int iLen = sNumber.length();
+		// Tao mot bien nho vi tri doc
+		int iRe = 0;
+		// Tao mot vong lap de doc so
+		for (int i = 0; i < iLen; i++) {
+			String sTemp = "" + sNumber.charAt(i);
+			int iTemp = Integer.parseInt(sTemp);
+			// Tao mot bien ket qua
+			String sRead = "";
+			// Kiem tra xem so nhan vao co = 0 hay ko
+			if (iTemp == 0) {
+				switch (iRe) {
+					case 0:
+						break;// Khong lam gi ca
+					case 1: {
+						if (Integer.parseInt("" + sNumber.charAt(0)) != 0) {
+							sRead = "lẻ" + " ";
+						}
+						break;
+					}
+					case 2: {
+						if (Integer.parseInt("" + sNumber.charAt(0)) != 0
+								&& Integer.parseInt("" + sNumber.charAt(1)) != 0) {
+							sRead = "không trăm" + " ";
+						}
+						break;
+					}
+				}
+			} else if (iTemp == 1) {
+				switch (iRe) {
+					case 1:
+						sRead = "mười" + " ";
+						break;
+					default:
+						sRead = "một" + " " + sDonvi[iRe];
+						break;
+				}
+			} else if (iTemp == 5) {
+				switch (iRe) {
+					case 0: {
+						if(sNumber.length() <= 1){
+							sRead = "năm" + " ";
+						}
+						else if (Integer.parseInt("" + sNumber.charAt(1)) != 0) {
+							sRead = "lăm" + " ";
+						} else
+							sRead = "năm" + " ";
+						break;
+					}
+					default:
+						sRead = sSo[iTemp] + sDonvi[iRe];
+				}
+			} else {
+				sRead = sSo[iTemp] + sDonvi[iRe];
+			}
+
+			sReturn = sRead + sReturn;
+			iRe++;
+		}
+		if (sReturn.length() > 0) {
+			sReturn += sPo[iPo];
+		}
+		// xu ly lan cuoi voi 220 000 tỷ 000 000 000 000 000
+		if(sNumber.length()>12)
+		{
+			// tren gia tri can xu ly, kiem tra xem don vi TY co = 000 khong
+			System.out.println(sNumber.substring(11, 8));
+		}
+		return sReturn;
+	}
 }

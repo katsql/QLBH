@@ -16,10 +16,11 @@ public class Staff extends Person{
     private float ngayCong;
     private float heSoLuong;
     private int luong;
+    private int MaSoThue;
 
     public Staff(){        
     }
-    public Staff( int maNV, String name, boolean gender, Date ngaySinh, String address,  int phone,  float ngayCong, float heSoLuong, int luong) {
+    public Staff( int maNV, String name, String gender, Date ngaySinh, String address,  int phone,  float ngayCong, float heSoLuong, int luong) {
         super(name, gender, ngaySinh, address, phone);
         this.maNV = maNV;
         this.ngayCong = ngayCong;
@@ -33,6 +34,14 @@ public class Staff extends Person{
 
     public void setMaNV(int maNV) {
         this.maNV = maNV;
+    }
+    
+    public int getMaSoThue() {
+        return MaSoThue;
+    }
+
+    public void setMaSoThue(int MaSoThue) {
+        this.MaSoThue = MaSoThue;
     }
 
     public float getNgayCong() {

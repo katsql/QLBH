@@ -9,7 +9,7 @@ package Model;
  *
  * @author huutr
  */
-public class Bill extends Product{
+public class Bill {
     private int MaHD;
     private String MaMH;
     private int SoLuongMua;

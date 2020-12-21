@@ -5,9 +5,8 @@
         <group>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/View/GioHang.java</file>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/qlbh/Main.java</file>
-            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/View/InfoMuaHang.java</file>
-            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/Controller/BillManager.java</file>
-            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/Model/DBConnector.java</file>
+            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/View/HoaDon.java</file>
+            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/QLBH/src/Controller/StaffManager.java</file>
         </group>
     </open-files>
 </project-private>

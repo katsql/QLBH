@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class Person {
     protected String name;
-    protected boolean gender;
+    protected String gender;
     private Date ngaySinh;
     protected String address;
     protected int phone;  
@@ -21,7 +21,7 @@ public class Person {
     public Person(){
     
     }
-    public Person(String name, boolean gender, Date ngaySinh, String address, int phone) {
+    public Person(String name, String gender, Date ngaySinh, String address, int phone) {
         this.name = name;
         this.gender = gender;
         this.ngaySinh = ngaySinh;
@@ -37,11 +37,11 @@ public class Person {
         this.name = name;
     }
 
-    public boolean getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
     

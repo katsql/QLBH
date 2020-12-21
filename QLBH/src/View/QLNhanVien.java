@@ -17,7 +17,7 @@ public class QLNhanVien extends javax.swing.JFrame {
         try {
             StaffManager sm = new StaffManager();
             Model model = new Model();
-            this.list = sm.getListStaff();
+            this.list = sm.getListNV();
             this.tbStaff.setModel(model);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(QLNhanVien.class.getName()).log(Level.SEVERE, null, ex);
@@ -40,7 +40,7 @@ public class QLNhanVien extends javax.swing.JFrame {
                 case 2:
                     return list.get(row).getNgaySinh();
                 case 3:
-                    return list.get(row).getGender()?"Nam":"Nữ";
+                    return list.get(row).getGender();
                 case 4:
                     return list.get(row).getAddress();
                 case 5:
@@ -268,37 +268,34 @@ public class QLNhanVien extends javax.swing.JFrame {
     }                                              
 
     private void jbn_DeleteNVActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        String manv = jt_SearchNV.getText();
-        if (manv.equals("")){
-            JOptionPane.showMessageDialog(null, "Chưa nhập mã nhân viên");
-        }else{
-            try {
-                int check;
-                StaffManager sm = new StaffManager();
-                check = (sm.deleteStaff(Integer.parseInt(manv)))?1:0;
-                switch(check){
-                    case 0:
-                        JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại");
-                        break;
-                    case 1:
-                        sm.deleteStaff(Integer.parseInt(manv));
-                        JOptionPane.showMessageDialog(null, "Xóa thành công!");
-                        break;
-                }
-
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            StaffManager sm = new StaffManager(); 
+            Model model = new Model();
+            int row = -1;
+            row = tbStaff.getSelectedRow();              //Lấy hàng được click
+            if (row != -1) 
+            {   
+                int MaNV = (int) tbStaff.getValueAt(row, 0);  //Lấy giá trị của phần tử hàng được chọn, cột 0
+                sm.deleteNV_follow_MaNV(MaNV);                          //Xóa hàng được chọn theo MaNV (Dùng hàm deleteNV_follow_MaNV)
+                JOptionPane.showMessageDialog(null, "Xóa thành công!");
+                    //Cập nhật lại bảng sau khi xóa nhân viên
+                this.list = sm.getListNV();
+                this.tbStaff.setModel(model);
+            } 
+            else JOptionPane.showMessageDialog(null, "Vui lòng click vào hàng cần xóa!");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(GioHang.class.getName()).log(Level.SEVERE, null, ex);
         }
     }                                            
 
     private void jbt_UpdateNVActionPerformed(java.awt.event.ActionEvent evt) {                                             
         try {
             StaffManager sm = new StaffManager();
+            jt_SearchNV.setText("");
             Model model = new Model();
-            this.list = sm.getListStaff();
+            this.list = sm.getListNV();
             this.tbStaff.setModel(model);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(QLNhanVien.class.getName()).log(Level.SEVERE, null, ex);
@@ -307,8 +304,135 @@ public class QLNhanVien extends javax.swing.JFrame {
         }
     }
     
-    private void jc_SearchNVActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
+    private void jc_SearchNVActionPerformed(java.awt.event.ActionEvent evt) { 
+          //Lấy yêu cầu tìm kiếm
+        String Search = jc_SearchNV.getSelectedItem().toString();
+        switch(Search)
+        {
+            case "Tìm kiếm Mã":
+            {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = jt_SearchNV.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        StaffManager sm = new StaffManager();
+                           //Kiểm tra xem mã nhân viên nhập có đúng????
+                        check = (sm.Check_MaNV(Integer.parseInt(Search_Text)))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại");
+                                jt_SearchNV.setText("");
+                                break;
+                            }
+                            case 1:
+                            {  
+                                   //Đưa ds nhân viên sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.list = sm.getListNV_follow_MaNV(Integer.parseInt(Search_Text));
+                                this.tbStaff.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+            case "Tìm kiếm Tên":
+            {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = jt_SearchNV.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        StaffManager sm = new StaffManager();
+                           //Kiểm tra xem Tên nhân viên nhập có đúng????
+                        check = (sm.Check_TenNV(Search_Text))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "Tên nhân viên không tồn tại");
+                                jt_SearchNV.setText("");
+                                break;
+                            }
+                            case 1:
+                            { 
+                                   //Đưa ds nhân viên sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.list = sm.getListNV_follow_TenNV(Search_Text);
+                                this.tbStaff.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+            case "Tìm kiếm SĐT":
+            {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = jt_SearchNV.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        StaffManager sm = new StaffManager();
+                           //Kiểm tra xem SĐT nhân viên nhập có đúng????
+                        check = (sm.Check_MaNV(Integer.parseInt(Search_Text)))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "SĐT nhân viên không tồn tại");
+                                jt_SearchNV.setText("");
+                                break;
+                            }
+                            case 1:
+                            { 
+                                   //Đưa ds nhân viên sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.list = sm.getListNV_follow_SDT(Integer.parseInt(Search_Text));
+                                this.tbStaff.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+        }
     }
 
     private void btn_BackNVActionPerformed(java.awt.event.ActionEvent evt) {                                           
