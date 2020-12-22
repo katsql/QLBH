@@ -47,6 +47,7 @@ public class ProductManager {
         }
         return false;
     }
+   
     
     public void addProduct(String MaMH, String TenMH, String LoaiMH, String HangSx, int SoLuong, int DonGia) throws SQLException{
         String query2 = "insert MATHANG values(?, ?, ?, ?, ?, ?)";
@@ -88,7 +89,112 @@ public class ProductManager {
         }
         return listMH;
     }
-    
+    public List<Product> getListMH_follow_MaMH(String MaMH) throws SQLException{
+        List<Product> ListMH_follow_MaMH = new ArrayList<>();
+        String query = "Select * from MATHANG where MaMH = ?";
+        PreparedStatement ps = this.conn.prepareStatement(query);
+        ps.setString(1, MaMH);
+        ResultSet rs = ps.executeQuery();
+        Product pd = null;
+        while(rs.next()){
+            pd = new Product();
+            pd.setSttMH(rs.getInt("sttMH"));
+            pd.setMaMH(rs.getString("MaMH"));
+            pd.setTenMH(rs.getString("TenMH"));
+            pd.setLoaiMH(rs.getString("LoaiMH"));
+            pd.setHangSX(rs.getString("HangSX"));
+            pd.setSoLuong(rs.getInt("SoLuong"));
+            pd.setDonGia(rs.getInt("DonGia"));
+            ListMH_follow_MaMH.add(pd);
+        }
+        return ListMH_follow_MaMH;
+    }
+     public boolean Check_TenMH(String TenMH) throws SQLException{
+            String query = "Select *  FROM MATHANG WHERE TenMH =?;";
+            PreparedStatement ps = this.conn.prepareStatement(query);
+            ps.setString(1, TenMH);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next())return true;
+            else return false;
+    }
+     
+     public List<Product> getListMH_follow_TenMH(String TenMH) throws SQLException{
+        List<Product> ListMH_follow_TenMH = new ArrayList<>();
+        String query = "Select * from MATHANG where TenMH = ?";
+        PreparedStatement ps = this.conn.prepareStatement(query);
+        ps.setString(1, TenMH);
+        ResultSet rs = ps.executeQuery();
+        Product pd = null;
+        while(rs.next()){
+            pd = new Product();
+            pd.setSttMH(rs.getInt("sttMH"));
+            pd.setMaMH(rs.getString("MaMH"));
+            pd.setTenMH(rs.getString("TenMH"));
+            pd.setLoaiMH(rs.getString("LoaiMH"));
+            pd.setHangSX(rs.getString("HangSX"));
+            pd.setSoLuong(rs.getInt("SoLuong"));
+            pd.setDonGia(rs.getInt("DonGia"));
+            ListMH_follow_TenMH.add(pd);
+        }
+        return ListMH_follow_TenMH;
+    }
+      public boolean Check_LoaiMH(String LoaiMH) throws SQLException{
+            String query = "Select *  FROM MATHANG WHERE LoaiMH =?;";
+            PreparedStatement ps = this.conn.prepareStatement(query);
+            ps.setString(1, LoaiMH);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next())return true;
+            else return false;
+    }
+      public List<Product> getListMH_follow_LoaiMH(String LoaiMH) throws SQLException{
+        List<Product> ListMH_follow_LoaiMH = new ArrayList<>();
+        String query = "Select * from MATHANG where LoaiMH = ?";
+        PreparedStatement ps = this.conn.prepareStatement(query);
+        ps.setString(1, LoaiMH);
+        ResultSet rs = ps.executeQuery();
+        Product pd = null;
+        while(rs.next()){
+            pd = new Product();
+            pd.setSttMH(rs.getInt("sttMH"));
+            pd.setMaMH(rs.getString("MaMH"));
+            pd.setTenMH(rs.getString("TenMH"));
+            pd.setLoaiMH(rs.getString("LoaiMH"));
+            pd.setHangSX(rs.getString("HangSX"));
+            pd.setSoLuong(rs.getInt("SoLuong"));
+            pd.setDonGia(rs.getInt("DonGia"));
+            ListMH_follow_LoaiMH.add(pd);
+        }
+        return ListMH_follow_LoaiMH;
+    }
+       public boolean Check_HangSX(String HangSX) throws SQLException{
+            String query = "Select *  FROM MATHANG WHERE HangSX =?;";
+            PreparedStatement ps = this.conn.prepareStatement(query);
+            ps.setString(1, HangSX);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next())return true;
+            else return false;
+    }
+       public List<Product> getListMH_follow_HangSX(String HangSX) throws SQLException{
+        List<Product> ListMH_follow_HangSX = new ArrayList<>();
+        String query = "Select * from MATHANG where HangSX = ?";
+        PreparedStatement ps = this.conn.prepareStatement(query);
+        ps.setString(1, HangSX);
+        ResultSet rs = ps.executeQuery();
+        Product pd = null;
+        while(rs.next()){
+            pd = new Product();
+            pd.setSttMH(rs.getInt("sttMH"));
+            pd.setMaMH(rs.getString("MaMH"));
+            pd.setTenMH(rs.getString("TenMH"));
+            pd.setLoaiMH(rs.getString("LoaiMH"));
+            pd.setHangSX(rs.getString("HangSX"));
+            pd.setSoLuong(rs.getInt("SoLuong"));
+            pd.setDonGia(rs.getInt("DonGia"));
+            ListMH_follow_HangSX.add(pd);
+        }
+        return ListMH_follow_HangSX;
+    }
+     
     public String getMaMH(String tenMH) throws SQLException{
         String query = "Select * from MATHANG where tenmh = ?";
         PreparedStatement ps = this.conn.prepareStatement(query);

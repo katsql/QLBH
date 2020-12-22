@@ -2,6 +2,7 @@ package View;
 
 import Controller.ProductManager;
 import Model.Product;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -135,13 +136,12 @@ public class QLMatHang extends javax.swing.JFrame {
             }
         });
 
-        jc_SearchMH.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tìm kiếm Mã ", "Tìm kiếm Tên ", "Tìm kiếm Loại", "Tìm kiếm Hãng" }));
+        jc_SearchMH.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tìm kiếm Mã", "Tìm kiếm Tên", "Tìm kiếm Loại", "Tìm kiếm Hãng" }));
         jc_SearchMH.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jc_SearchMHActionPerformed(evt);
             }
         });
-
         btn_UpdateMH.setText("Cập nhật");
         btn_UpdateMH.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,7 +169,7 @@ public class QLMatHang extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(layout.createSequentialGroup()
                             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jc_SearchMH, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jc_SearchMH, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(tf_SearchMH, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -215,34 +215,26 @@ public class QLMatHang extends javax.swing.JFrame {
         mh.setVisible(true);
     }                                         
 
-    private void btn_DeleteMHActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        String mamh = tf_SearchMH.getText();
-        if (mamh.equals("")){
-            JOptionPane.showMessageDialog(null, "Chưa nhập mã mặt hàng");
-        }
-        else{
-            try {
-                int check;
-                ProductManager pm = new ProductManager();
-                check = (pm.checkProduct(mamh))?1:0;
-                
-                
-                switch(check){
-                    case 0:
-                        JOptionPane.showMessageDialog(null, "Mã mặt hàng không tồn tại");
-                        break;
-                    case 1:
-                        pm.deleteProduct(mamh);
-                        JOptionPane.showMessageDialog(null, "Xóa thành công!");
-                        tf_SearchMH.setText("");
-                        break;
-                }
-
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(QLMatHang.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(QLMatHang.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        private void btn_DeleteMHActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        try {
+            ProductManager pm = new ProductManager(); 
+            Model model = new Model();
+            int row = -1;
+            row = tbProduct.getSelectedRow();              //Lấy hàng được click
+            if (row != -1) 
+            {   
+                String MaMH = (String) tbProduct.getValueAt(row, 1);  //Lấy giá trị của phần tử hàng được chọn, cột 0
+                pm.deleteProduct(MaMH);                          //Xóa hàng được chọn theo MaMH (Dùng hàm deleteMH_follow_MaMH)
+                JOptionPane.showMessageDialog(null, "Xóa thành công!");
+                    //Cập nhật lại bảng sau khi xóa mặt hàng
+                this.listMH = pm.getListMH();
+                this.tbProduct.setModel(model);
+            } 
+            else JOptionPane.showMessageDialog(null, "Vui lòng click vào hàng cần xóa!");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(QLMatHang.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(QLMatHang.class.getName()).log(Level.SEVERE, null, ex);
         }
     }                                            
 
@@ -263,10 +255,177 @@ public class QLMatHang extends javax.swing.JFrame {
         }
     }
      
-     private void jc_SearchMHActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
-    } 
-    
+    private void jc_SearchMHActionPerformed(java.awt.event.ActionEvent evt) { 
+          //Lấy yêu cầu tìm kiếm
+        String Search = jc_SearchMH.getSelectedItem().toString();
+        switch(Search)
+        {
+            case "Tìm kiếm Mã":
+            {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = tf_SearchMH.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        ProductManager pm = new ProductManager();
+                           //Kiểm tra xem mã mặt hang nhập có đúng????
+                        check = (pm.checkProduct((Search_Text)))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "Mã mặt hàng không tồn tại");
+                                tf_SearchMH.setText("");
+                                break;
+                            }
+                            case 1:
+                            {  
+                                   //Đưa ds mặt hàng sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.listMH = pm.getListMH_follow_MaMH((Search_Text));
+                                this.tbProduct.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+            case "Tìm kiếm Tên":
+            {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = tf_SearchMH.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        ProductManager pm = new ProductManager();
+                           //Kiểm tra xem Tên mặt hàng nhập có đúng????
+                        check = (pm.Check_TenMH(Search_Text))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "Tên mặt hàng không tồn tại");
+                                tf_SearchMH.setText("");
+                                break;
+                            }
+                            case 1:
+                            { 
+                                   //Đưa ds mặt hàng sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.listMH = pm.getListMH_follow_TenMH(Search_Text);
+                                this.tbProduct.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+            case "Tìm kiếm Loại":
+            {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = tf_SearchMH.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        ProductManager pm = new ProductManager();
+                           //Kiểm tra xem Loại mặt hàng nhập có đúng????
+                        check = (pm.Check_LoaiMH(Search_Text))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "Loại mặt hàng không tồn tại");
+                                tf_SearchMH.setText("");
+                                break;
+                            }
+                            case 1:
+                            { 
+                                   //Đưa ds mặt hàng sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.listMH = pm.getListMH_follow_LoaiMH(Search_Text);
+                                this.tbProduct.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+           case "Tìm kiếm Hãng":
+               {
+                   //Lấy dữ liệu từ ô tìm kiếm
+                String Search_Text = tf_SearchMH.getText();
+                   //Kiểm tra dữ liệu vừa lấy
+                if (Search_Text.equals(""))
+                {    
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập dữ liệu muốn tìm kiếm vào ô trống");
+                }
+                else 
+                {
+                    try {
+                        int check;
+                        ProductManager pm = new ProductManager();
+                           //Kiểm tra xem Hãng sản xuất nhập có đúng????
+                        check = (pm.Check_HangSX(Search_Text))?1:0;
+                        switch(check){
+                            case 0:
+                            {
+                                JOptionPane.showMessageDialog(null, "Loại mặt hàng không tồn tại");
+                                tf_SearchMH.setText("");
+                                break;
+                            }
+                            case 1:
+                            { 
+                                   //Đưa ds mặt hàng sau khi lọc tìm kiếm lên bảng
+                                Model model = new Model();
+                                this.listMH = pm.getListMH_follow_HangSX(Search_Text);
+                                this.tbProduct.setModel(model);
+                                JOptionPane.showMessageDialog(null, "Tìm kiếm thành công!");
+                                break;
+                            }      
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(SuaNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            }
+        }
+    }
               
     private javax.swing.JButton btn_AddMH;
     private javax.swing.JButton btn_BackMH;
