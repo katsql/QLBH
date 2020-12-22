@@ -2,6 +2,7 @@ package View;
 
 import javax.swing.JOptionPane;
 import Controller.StaffManager;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +42,16 @@ public class DangNhap extends javax.swing.JFrame {
                 btn_LoginActionPerformed(evt);
             }
         });
-
+         tf_Account.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_AccountKeyPressed(evt);
+            }
+        });
+                  tf_PassWord.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_PassWordKeyPressed(evt);
+            }
+        });
         jl_Login.setFont(new java.awt.Font("Tahoma", 1, 18));
         jl_Login.setText("ĐĂNG NHẬP");
 
@@ -145,7 +155,90 @@ public class DangNhap extends javax.swing.JFrame {
             }   
         }
     }                                         
-
+    private void  tf_AccountKeyPressed(java.awt.event.KeyEvent evt){
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            String user = tf_Account.getText();
+        String pass = tf_PassWord.getText();
+        if (user.equals("") || pass.equals("")){
+            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!");
+        }
+        else {
+            try {
+                StaffManager sm = new StaffManager();
+                Menu menu = new Menu();
+                int reSult = sm.login(user, pass);
+                switch(reSult){
+                    case 2:
+                        JOptionPane.showMessageDialog(null, "Tài khoản hoặc Mật khẩu không chính xác!");
+                        break;
+                    case 0:
+                        this.dispose();                       
+                        menu.setVisible(true);
+                        menu.lbUserName(user);
+                        break;
+                    case 1:
+                        this.dispose();
+                        menu.setVisible(true);
+                        menu.lbUserName(user);
+                        menu.hiddenBTNNV();
+                        menu.hiddenBTNMH();
+                        InfoMuaHang info = new InfoMuaHang();
+                        info.hiddenShowAllInfoHD();
+                        break;
+                        
+                }
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
+            }   
+        }
+            
+            
+        }
+    }
+    private void tf_PassWordKeyPressed(java.awt.event.KeyEvent evt){
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            String user = tf_Account.getText();
+        String pass = tf_PassWord.getText();
+        if (user.equals("") || pass.equals("")){
+            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!");
+        }
+        else {
+            try {
+                StaffManager sm = new StaffManager();
+                Menu menu = new Menu();
+                int reSult = sm.login(user, pass);
+                switch(reSult){
+                    case 2:
+                        JOptionPane.showMessageDialog(null, "Tài khoản hoặc Mật khẩu không chính xác!");
+                        break;
+                    case 0:
+                        this.dispose();                       
+                        menu.setVisible(true);
+                        menu.lbUserName(user);
+                        break;
+                    case 1:
+                        this.dispose();
+                        menu.setVisible(true);
+                        menu.lbUserName(user);
+                        menu.hiddenBTNNV();
+                        menu.hiddenBTNMH();
+                        InfoMuaHang info = new InfoMuaHang();
+                        info.hiddenShowAllInfoHD();
+                        break;
+                        
+                }
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
+            }   
+        }
+            
+            
+        }
+    }
     private void jbn_BackLGActionPerformed(java.awt.event.ActionEvent evt) {                                           
         this.dispose();
     }                                          
